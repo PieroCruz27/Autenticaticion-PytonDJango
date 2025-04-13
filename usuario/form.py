@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Empresa, RespuestaAutomatica
+
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -30,4 +31,13 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['date_of_birth']
-    
+
+class EmpresaForm(forms.ModelForm):
+    class Meta:
+        model = Empresa
+        fields = '__all__'
+
+class RespuestaAutomaticaForm(forms.ModelForm):
+    class Meta:
+        model = RespuestaAutomatica
+        fields = '__all__'

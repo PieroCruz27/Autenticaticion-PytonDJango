@@ -1,14 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .form import LoginForm
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib import messages
 
 
 from .form import UserRegistrationForm, UserEditForm, LoginForm, ProfileEditForm
-from .models import Profile
+from .models import Profile, Empresa, RespuestaAutomatica, Interaccion
 
 # Create your views here.
 
@@ -36,11 +36,22 @@ def user_login(request):
         form = LoginForm()  # Instanciamos el formulario
     return render(request, 'account/login.html', {'form': form})  # Corrección de indentación
 
+# Decorator to check if a user is a superuser
+def admin_required(function):
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.is_superuser:
+            return function(request, *args, **kwargs)
+        else:
+            return redirect('login')  # Redirect to the login page
+    return wrapper
 
-
+@admin_required
 @login_required
 def dashboard(request):
-   return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+   user = request.user  # Add the user variable
+   return render(request, 'account/dashboard.html', {'section': 'dashboard', 'user': user})
+
+
 
 
 def register(request):
